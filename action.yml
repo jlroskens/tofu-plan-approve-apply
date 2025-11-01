@@ -64,19 +64,24 @@ runs:
       id: init
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
-      run: tofu init -input=false
+      run: |
+        echo "🟨 Tofu Init"
+        tofu init -input=false
 
     - name: 🟨 Tofu Validate
       id: validate
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
-      run: tofu validate -no-color
+      run: | 
+        echo "🟨 Tofu Validate"
+        tofu validate -no-color
 
     - name: 🟨 Tofu Plan
       id: plan
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
       run: |
+        echo "🟨 Tofu Plan"
         tofu plan -input=false -compact-warnings -no-color -detailed-exitcode ${{ steps.parse-inputs.outputs.tfvar-files }} ${{ steps.parse-inputs.outputs.tfvars }} -out .tofuplan
 
     - name: ⌛ Wait for Issue Approval
@@ -100,6 +105,7 @@ runs:
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
       run: |
+        echo "🟨 Tofu Apply"
         tofu apply -compact-warnings -no-color .tofuplan
     
     - name: 🧾Job Summary
@@ -111,6 +117,7 @@ runs:
       if: always()
       shell: bash
       run: |
+        echo "🧾Job Summary"
         echo "## Apply Result" >> $GITHUB_STEP_SUMMARY
         echo -e '```'"\n$APPLY_OUTPUT\n"'```' >> $GITHUB_STEP_SUMMARY
 
