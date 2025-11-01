@@ -1,0 +1,123 @@
+name: 'Tofu Plan & Apply'
+description: >
+  Runs tofu init, validate, plan and apply. If approvals are configured, create's an issue with the plan output
+  and waits for an approval before executing the apply.
+inputs:
+  var-files:
+    type: string
+    description: >
+      List of tfvar files applied in order. One file per line. For more than one file, 
+      begin with the heredoc ignore indent '|-'.
+      ```
+      var-files: |-
+        values01.tfvars
+        values02.tfvars
+      ```
+    required: false
+  vars:
+    type: string
+    description: >
+      TF variable inputs in the format of `myvarname=myvalue` or `myvarname mayvalue`. For multiple variables,
+      begin with the heredoc ignore indent '|-' and add set on variable per line.
+      ```
+      vars: |-
+        myvar01=true
+        myvar02 3
+      ```
+    required: false
+  require-approval:
+    type: bool
+    description: >
+      Whether or not a plan requires an approval prior to applying. When enabled, creates an issue that must be 
+      commented on to allow the action to continue. For more details, see the trstringer/manual-approval@v1 action'
+      documentation.
+    required: false
+    default: true
+  required-approvers:
+    type: string
+    description: Comma separated list of users who can approve a plan. Required if `require-approval` is true.
+  working-directory:
+    type: string
+    description: The directory in which to execute tofu commands. Defaults to the current directory.
+    required: false
+    default: '.'
+
+branding:
+  icon: 'box'
+  color: 'yellow'
+
+runs:
+  using: "composite"
+  steps:
+    - name: 🔬 Validate and Parse Inputs
+      id: parse-inputs
+      env:
+        TF_VAR_FILES: ${{ inputs.var-files }}
+        TF_VARS: ${{ inputs.vars }}
+        REQUIRE_APPROVAL: ${{ inputs.require-approval }}
+        APPROVERS: ${{ inputs.required-approvers }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+      shell: bash
+      run: $GITHUB_ACTION_PATH/parse_inputs.sh
+      
+    - name: 🟨 Tofu Init
+      id: init
+      working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
+      shell: bash
+      run: |
+        echo "🟨 Tofu Init"
+        tofu init -input=false
+
+    - name: 🟨 Tofu Validate
+      id: validate
+      working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
+      shell: bash
+      run: | 
+        echo "🟨 Tofu Validate"
+        tofu validate -no-color
+
+    - name: 🟨 Tofu Plan
+      id: plan
+      working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
+      shell: bash
+      run: |
+        echo "🟨 Tofu Plan"
+        tofu plan -input=false -compact-warnings -no-color -detailed-exitcode ${{ steps.parse-inputs.outputs.tfvar-files }} ${{ steps.parse-inputs.outputs.tfvars }} -out .tofuplan
+
+    - name: ⌛ Wait for Issue Approval
+      uses: trstringer/manual-approval@v1
+      if: steps.plan.outputs.exitcode == 2 && inputs.require-approval
+      with:
+        secret: ${{ github.TOKEN }}
+        approvers: ${{ steps.parse-inputs.outputs.required-approvers }}
+        minimum-approvals: 1
+        issue-title: "📝 Approve Tofu Plan"
+        issue-body: |
+          ```
+          ${{ steps.plan.outputs.stdout }}
+          ```
+        exclude-workflow-initiator-as-approver: false
+        fail-on-denial: true
+    
+    - name: 🟨 Tofu Apply
+      if: steps.plan.outputs.exitcode == 2
+      id: apply
+      working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
+      shell: bash
+      run: |
+        echo "🟨 Tofu Apply"
+        tofu apply -compact-warnings -no-color .tofuplan
+    
+    - name: 🧾Job Summary
+      env:
+        PLAN_OUTPUT: ${{ steps.plan.outputs.stdout }}
+        PLAN_ERRORS: ${{ steps.plan.outputs.stderr }}
+        APPLY_OUTPUT: ${{ steps.apply.outputs.stdout }}
+        APPLY_ERRORS: ${{ steps.apply.outputs.stderr }}
+      if: always()
+      shell: bash
+      run: |
+        echo "🧾Job Summary"
+        echo "## Apply Result" >> $GITHUB_STEP_SUMMARY
+        echo -e '```'"\n$APPLY_OUTPUT\n"'```' >> $GITHUB_STEP_SUMMARY
+
