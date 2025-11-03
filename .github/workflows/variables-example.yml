@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/init-var-args
     
   workflow_dispatch:
 
@@ -29,7 +28,7 @@ jobs:
         run: mkdir -p .terraform
 
       - name: Plan and Apply
-        uses: jlroskens/tofu-plan-approve-apply@feature/init-var-args
+        uses: jlroskens/tofu-plan-approve-apply@v1
         id: plan-apply
         with:
           working-directory: examples/variables
