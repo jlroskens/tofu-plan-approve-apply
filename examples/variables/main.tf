@@ -1,6 +1,6 @@
 terraform {
   backend "local" {
-    path = var.state_file_name
+    path = var.state_file_path
   }
 }
 
