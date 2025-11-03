@@ -2,6 +2,11 @@ name: 'Tofu Plan & Apply'
 description: >
   Runs tofu init, validate, plan and apply. If approvals are configured, create's an issue with the plan output
   and waits for an approval before executing the apply.
+
+branding:
+  icon: 'box'
+  color: 'yellow'
+
 inputs:
   var-files:
     type: string
@@ -46,9 +51,13 @@ inputs:
     required: false
     default: '.'
 
-branding:
-  icon: 'box'
-  color: 'yellow'
+outputs:
+  var-file-args:
+    description: "Command line `-var-file {filename}` argument(s) that were used to execute tofu apply and plan steps (and init if configured)."
+    value: ${{ steps.parse-inputs.outputs.tfvar-files }}
+  var-args:
+    description: "Command line `-var {var_name}={value}` argument(s) that were used to execute tofu apply and plan steps (and init if configured)."
+    value: ${{ steps.parse-inputs.outputs.tfvars }}
 
 runs:
   using: "composite"

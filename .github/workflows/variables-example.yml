@@ -29,6 +29,7 @@ jobs:
 
       - name: Plan and Apply
         uses: jlroskens/tofu-plan-approve-apply@feature/init-var-args
+        id: plan-apply
         with:
           working-directory: examples/variables
           var-files: |-
@@ -39,6 +40,6 @@ jobs:
       
       - name: Outputs
         run: |
-          echo "Random Number: $(tofu output -raw random_value)"
-          echo "State File:" 
+          echo "Random Number: $(tofu output -raw random_value ${{ steps.plan-apply.outputs.var-file-args }} ${{ steps.plan-apply.outputs.var-args }})"
+          echo ".terraform directory contents:" 
           ls -l .terraform
