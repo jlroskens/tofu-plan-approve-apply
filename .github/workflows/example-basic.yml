@@ -1,4 +1,4 @@
-name: Basic Example w/ Approval
+name: 🟨 Basic Example
 
 on:
   push:
@@ -22,7 +22,5 @@ jobs:
       - name: Plan and Apply
         uses: jlroskens/tofu-plan-approve-apply@feature/init-var-args
         with:
-          require-approval: true
-          required-approvers: jlroskens
           working-directory: examples/basic
          

@@ -1,4 +1,4 @@
-name: 🟨 Variables Example
+name: 🟨 Basic Example w/ Approval
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
   issues: write
 jobs:
   plan-apply:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Install OpenTofu
@@ -22,9 +22,7 @@ jobs:
       - name: Plan and Apply
         uses: jlroskens/tofu-plan-approve-apply@feature/init-var-args
         with:
-          working-directory: examples/variables
-          var-files: |-
-            example.tfvars
-          vars: |-
-             state_file_name=variables_example.tfstate
-          init-vars-enabled: true
+          require-approval: true
+          required-approvers: jlroskens
+          working-directory: examples/basic
+         
