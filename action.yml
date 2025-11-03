@@ -36,7 +36,7 @@ inputs:
       commented on to allow the action to continue. For more details, see the trstringer/manual-approval@v1 action'
       documentation.
     required: false
-    default: true
+    default: false
   required-approvers:
     type: string
     description: Comma separated list of users who can approve a plan. Required if `require-approval` is true.
