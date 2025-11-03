@@ -11,6 +11,10 @@ on:
 permissions:
   contents: read
   issues: write
+defaults:
+    run:
+      shell: bash
+      working-directory: examples/variables
 jobs:
   plan-apply:
     runs-on: ubuntu-latest
@@ -21,7 +25,6 @@ jobs:
         uses: opentofu/setup-opentofu@v1
       
       - name: Create .terraform Directory
-        shell: bash
         run: mkdir -p .terraform
 
       - name: Plan and Apply
@@ -35,8 +38,7 @@ jobs:
           init-vars-enabled: true
       
       - name: Outputs
-        shell: bash
         run: |
           echo "Random Number: $(tofu output -raw random_value)"
           echo "State File:" 
-          ls -l .terraform/variables_example.tfstate
+          ls -l .terraform
