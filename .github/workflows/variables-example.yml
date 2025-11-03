@@ -40,6 +40,6 @@ jobs:
       
       - name: Outputs
         run: |
-          echo "Random Number: $(tofu output -raw random_value ${{ steps.plan-apply.outputs.var-file-args }} ${{ steps.plan-apply.outputs.var-args }})"
+          echo "Random Number: $(tofu output -raw ${{ steps.plan-apply.outputs.var-file-args }} ${{ steps.plan-apply.outputs.var-args }} random_value)"
           echo ".terraform directory contents:" 
           ls -l .terraform
