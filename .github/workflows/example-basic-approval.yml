@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/init-var-args
     
   workflow_dispatch:
 
@@ -20,7 +19,7 @@ jobs:
         uses: opentofu/setup-opentofu@v1
 
       - name: Plan and Apply
-        uses: jlroskens/tofu-plan-approve-apply@feature/init-var-args
+        uses: jlroskens/tofu-plan-approve-apply@v1
         with:
           require-approval: true
           required-approvers: jlroskens
