@@ -1,0 +1,48 @@
+name: 🟨 Variables Example
+
+on:
+  push:
+    branches:
+      - main
+    
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+defaults:
+    run:
+      shell: bash
+      working-directory: examples/variables
+jobs:
+  plan-apply:
+    name: Var Args + Plan -> Approve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      
+      - name: Install OpenTofu
+        uses: opentofu/setup-opentofu@v1
+      
+      - name: Create .terraform Directory
+        run: mkdir -p .terraform
+
+      - name: Plan and Apply
+        uses: jlroskens/tofu-plan-approve-apply@v1
+        id: plan-apply
+        with:
+          working-directory: examples/variables
+          var-files: |-
+            example.tfvars
+          vars: |-
+             state_file_path=.terraform/variables_example.tfstate
+          init-vars-enabled: true
+      
+      - name: Outputs
+        run: |
+          echo "Random Number: $(tofu output -raw ${{ steps.plan-apply.outputs.var-file-args }} ${{ steps.plan-apply.outputs.var-args }} random_value)"
+          echo ".terraform directory contents:" 
+          echo "## Job Outputs" >> $GITHUB_STEP_SUMMARY
+          echo "**Random Number:** $(tofu output -raw ${{ steps.plan-apply.outputs.var-file-args }} ${{ steps.plan-apply.outputs.var-args }} random_value)" >> $GITHUB_STEP_SUMMARY
+          echo "### .terraform/variables_example.tfstate contents:"  >> $GITHUB_STEP_SUMMARY
+          echo -e '```'"\n$(jq '.' .terraform/variables_example.tfstate)\n"'```' >> $GITHUB_STEP_SUMMARY

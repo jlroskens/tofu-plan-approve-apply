@@ -1,0 +1,32 @@
+name: 🟨 Basic Example w/ Approval
+
+on:
+  push:
+    branches:
+      - main
+    
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+jobs:
+  plan-apply:
+    name: Plan -> Approve -> Apply
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: Plan and Apply
+        uses: jlroskens/tofu-plan-approve-apply@v1
+        with:
+          require-approval: true
+          required-approvers: jlroskens
+          working-directory: examples/basic
+      - name: Outputs
+        shell: bash
+        run: |
+          echo "Random Number: $(tofu output -raw random_value)"
+         
