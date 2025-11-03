@@ -25,4 +25,8 @@ jobs:
           require-approval: true
           required-approvers: jlroskens
           working-directory: examples/basic
+      - name: Outputs
+        shell: bash
+        run: |
+          echo "Random Number: $(tofu output -raw random_value)"
          

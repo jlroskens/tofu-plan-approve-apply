@@ -18,17 +18,17 @@ This example demonstrates how to use variables in OpenTofu to configure a random
 
 1. Initialize OpenTofu (provide the state file name):
    ```bash
-   tofu init -var="state_file_name=terraform.tfstate"
+   tofu init -var="state_file_path=.terraform/terraform.tfstate"
    ```
 
 2. Plan the configuration:
    ```bash
-   tofu plan -var="state_file_name=terraform.tfstate"
+   tofu plan -var="state_file_path=.terraform/terraform.tfstate"
    ```
 
 3. Apply the configuration:
    ```bash
-   tofu apply -var="state_file_name=terraform.tfstate"
+   tofu apply -var="state_file_path=.terraform/terraform.tfstate"
    ```
 
 ## Output

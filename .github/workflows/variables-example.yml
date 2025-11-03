@@ -26,5 +26,11 @@ jobs:
           var-files: |-
             example.tfvars
           vars: |-
-             state_file_name=variables_example.tfstate
+             state_file_path=.terraform/variables_example.tfstate
           init-vars-enabled: true
+      - name: Outputs
+        shell: bash
+        run: |
+          echo "Random Number: $(tofu output -raw random_value)"
+          echo "State File:" 
+          ls -l .terraform/variables_example.tfstate
