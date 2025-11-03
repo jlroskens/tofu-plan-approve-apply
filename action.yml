@@ -96,7 +96,11 @@ runs:
       shell: bash
       run: |
         $GITHUB_ACTION_PATH/print_step.sh 3
-        tofu validate -no-color
+        if [[ $INIT_VARS_ENABLED ]]; then
+          tofu validate -no-color ${{ steps.parse-inputs.outputs.tfvar-files }} ${{ steps.parse-inputs.outputs.tfvars }}
+        else
+          tofu validate -no-color
+        fi
 
     - name: 🟨 Tofu Plan
       id: plan
