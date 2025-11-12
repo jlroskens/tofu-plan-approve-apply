@@ -28,7 +28,7 @@ jobs:
         run: mkdir -p .terraform
 
       - name: Plan and Apply
-        uses: jlroskens/tofu-plan-approve-apply@v1
+        uses: rNimbus-com/tofu-plan-approve-apply@v1
         id: plan-apply
         with:
           working-directory: examples/variables

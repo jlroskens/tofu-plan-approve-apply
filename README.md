@@ -8,13 +8,13 @@ Plan and apply terraforms with one easy step. Enables approvals via thanks to th
 ### Minimal Usage
 ```
       - name: Plan and Apply
-        uses: jlroskens/tofu-plan-approve-apply@v1
+        uses: rNimbus-com/tofu-plan-approve-apply@v1
 ```
 
 ### Tfvars Files
 ```
       - name: Plan and Apply
-        uses: jlroskens/tofu-plan-approve-apply@v1
+        uses: rNimbus-com/tofu-plan-approve-apply@v1
         with:
           var-files: |-
             .env/mysettings1.tfvars
@@ -24,7 +24,7 @@ Plan and apply terraforms with one easy step. Enables approvals via thanks to th
 ### Variables
 ```
       - name: Plan and Apply
-        uses: jlroskens/tofu-plan-approve-apply@v1
+        uses: rNimbus-com/tofu-plan-approve-apply@v1
         with:
           vars: |-
             my_string_var=my_value
@@ -36,7 +36,7 @@ Enabling the `require-approval` requires an issue comment to be approved prior t
 
 ```
       - name: Plan, Approve, Apply
-        uses: jlroskens/tofu-plan-approve-apply@v1
+        uses: rNimbus-com/tofu-plan-approve-apply@v1
         with:
           require-approval: true
           required-approvers: githubuser1, githubuser2
@@ -47,7 +47,7 @@ Executes `tofu init`, `plan` and `apply` with `-var-file` and `-var` arguments. 
 
 ```
       - name: Plan, Approve, Apply
-        uses: jlroskens/tofu-plan-approve-apply@v1
+        uses: rNimbus-com/tofu-plan-approve-apply@v1
         with:
           var-files: |-
             .env/mysettings1.tfvars
